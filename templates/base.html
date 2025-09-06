@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Proyecto Flask</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Supermercado Flask</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('list_products') }}">Productos</a>
+            <a href="{{ url_for('add_product') }}">Agregar Producto</a>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+

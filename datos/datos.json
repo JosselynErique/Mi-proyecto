@@ -1,0 +1,49 @@
+{
+    "productos": [
+        {
+            "nombre": "Coca Cola ",
+            "cantidad": 50,
+            "precio": 1.0
+        },
+        {
+            "nombre": "Jr.salchica",
+            "cantidad": 15,
+            "precio": 1.1
+        },
+        {
+            "nombre": "Azúcar",
+            "cantidad": 50,
+            "precio": 0.65
+        },
+        {
+            "nombre": "Arroz",
+            "cantidad": 55,
+            "precio": 0.8
+        },
+        {
+            "nombre": "aceite",
+            "cantidad": 10,
+            "precio": 2.65
+        },
+        {
+            "nombre": "papas Ruffles",
+            "cantidad": 20,
+            "precio": 0.35
+        },
+        {
+            "nombre": "pan",
+            "cantidad": 10,
+            "precio": 2.3
+        },
+        {
+            "nombre": "agua ",
+            "cantidad": 50,
+            "precio": 0.5
+        },
+        {
+            "nombre": "lenteja",
+            "cantidad": 25,
+            "precio": 1.15
+        }
+    ]
+}
