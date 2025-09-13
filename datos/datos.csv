@@ -1,10 +1,9 @@
 id,nombre,cantidad,precio
-1,Coca Cola ,50,1.0
-2,Jr.salchica,15,1.1
-3,Azúcar,50,0.65
-4,Arroz,55,0.8
-5,aceite,10,2.65
-6,papas Ruffles,20,0.35
-7,pan,10,2.3
-8,agua ,50,0.5
-9,lenteja,25,1.15
+1,sal,10,1.0
+2,Coca Cola ,50,1.5
+3,pan ,25,0.17
+4,chupetes,35,0.2
+5,Jr.salchica,15,1.25
+6,Arroz,50,0.8
+7,Azúcar,45,0.6
+8,papas Ruffles,25,0.5

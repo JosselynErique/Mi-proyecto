@@ -1,0 +1,9 @@
+<h2>Lista de Usuarios</h2>
+<a href="{{ url_for('add_usuario') }}">➕ Nuevo Usuario</a>
+<ul>
+  {% for u in usuarios %}
+    <li>{{ u.nombre }} - {{ u.mail }} 
+        <a href="{{ url_for('delete_usuario', id_usuario=u.id_usuario) }}">❌</a>
+    </li>
+  {% endfor %}
+</ul>

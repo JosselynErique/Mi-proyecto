@@ -1,11 +1,10 @@
 Inventario Supermercado
 -----------------------
-1. Coca Cola  - Cantidad: 50 - Precio: 1.0
-2. Jr.salchica - Cantidad: 15 - Precio: 1.1
-3. Azúcar - Cantidad: 50 - Precio: 0.65
-4. Arroz - Cantidad: 55 - Precio: 0.8
-5. aceite - Cantidad: 10 - Precio: 2.65
-6. papas Ruffles - Cantidad: 20 - Precio: 0.35
-7. pan - Cantidad: 10 - Precio: 2.3
-8. agua  - Cantidad: 50 - Precio: 0.5
-9. lenteja - Cantidad: 25 - Precio: 1.15
+1. sal - Cantidad: 10 - Precio: 1.0
+2. Coca Cola  - Cantidad: 50 - Precio: 1.5
+3. pan  - Cantidad: 25 - Precio: 0.17
+4. chupetes - Cantidad: 35 - Precio: 0.2
+5. Jr.salchica - Cantidad: 15 - Precio: 1.25
+6. Arroz - Cantidad: 50 - Precio: 0.8
+7. Azúcar - Cantidad: 45 - Precio: 0.6
+8. papas Ruffles - Cantidad: 25 - Precio: 0.5
