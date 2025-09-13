@@ -8,3 +8,5 @@ Inventario Supermercado
 6. Arroz - Cantidad: 50 - Precio: 0.8
 7. Azúcar - Cantidad: 45 - Precio: 0.6
 8. papas Ruffles - Cantidad: 25 - Precio: 0.5
+9. aceite - Cantidad: 10 - Precio: 3.0
+10. jugo  - Cantidad: 15 - Precio: 1.35

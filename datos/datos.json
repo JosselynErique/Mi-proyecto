@@ -39,6 +39,16 @@
             "nombre": "papas Ruffles",
             "cantidad": 25,
             "precio": 0.5
+        },
+        {
+            "nombre": "aceite",
+            "cantidad": 10,
+            "precio": 3.0
+        },
+        {
+            "nombre": "jugo ",
+            "cantidad": 15,
+            "precio": 1.35
         }
     ]
 }
