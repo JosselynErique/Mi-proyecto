@@ -1,25 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import json
 import csv
+import urllib.parse
 
 # =============================
 # CONFIGURACIÓN APP
 # =============================
 app = Flask(__name__)
-app.secret_key = "supermercado2025"
+app.secret_key = os.environ.get("FLASK_SECRET", "supermercado2025")  # usar var de entorno si existe
 
 # Configuración de conexión MySQL
 USER_DB = "root"
-PASS_DB = ""  # sin contraseña
+PASS_DB = ""
 HOST_DB = "localhost"
 NAME_DB = "supermercado"
 
-# Conexión MySQL
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://{USER_DB}:{PASS_DB}@{HOST_DB}/{NAME_DB}"
+# Construir URI con quote_plus para evitar problemas con caracteres
+password_quoted = urllib.parse.quote_plus(PASS_DB)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://{USER_DB}:{password_quoted}@{HOST_DB}/{NAME_DB}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
@@ -42,17 +44,21 @@ class Producto(db.Model):
 
 class Usuario(UserMixin, db.Model):
     __tablename__ = "usuarios"
-    id_usuario = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, primary_key=True)  # <- usa id_usuario de tu tabla real
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
+    # Flask-Login requiere que get_id() devuelva un str
     def get_id(self):
         return str(self.id_usuario)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Usuario.query.get(int(user_id))
+    try:
+        return Usuario.query.get(int(user_id))
+    except Exception:
+        return None
 
 # =============================
 # FUNCIONES AUXILIARES ARCHIVOS
@@ -90,21 +96,18 @@ def guardar_csv():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        nombre = request.form.get("nombre")
-        email = request.form.get("email")
-        password = request.form.get("password")
+        nombre = request.form.get("nombre", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
 
-        # Validación de campos vacíos
         if not nombre or not email or not password:
             flash("❌ Todos los campos son obligatorios", "danger")
             return redirect(url_for("register"))
 
-        # Verificar si el usuario ya existe
         if Usuario.query.filter_by(email=email).first():
             flash("❌ El correo ya está registrado", "danger")
             return redirect(url_for("register"))
 
-        # Encriptar contraseña
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
         nuevo = Usuario(nombre=nombre, email=email, password=hashed_password)
@@ -118,8 +121,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
 
         if not email or not password:
             flash("❌ Todos los campos son obligatorios", "danger")
@@ -152,7 +155,7 @@ def dashboard():
 # =============================
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return redirect(url_for('login'))
 
 @app.route("/products")
 @login_required
@@ -164,12 +167,19 @@ def list_products():
 @login_required
 def add_product():
     if request.method == "POST":
-        nombre = request.form.get("nombre")
-        cantidad = request.form.get("cantidad", type=int)
-        precio = request.form.get("precio", type=float)
+        nombre = request.form.get("nombre", "").strip()
+        cantidad_raw = request.form.get("cantidad", "").strip()
+        precio_raw = request.form.get("precio", "").strip()
 
-        if not nombre or cantidad is None or precio is None:
-            flash("❌ Todos los campos son obligatorios y deben ser válidos", "danger")
+        if not nombre or not cantidad_raw or not precio_raw:
+            flash("❌ Todos los campos son obligatorios", "danger")
+            return redirect(url_for("add_product"))
+
+        try:
+            cantidad = int(cantidad_raw)
+            precio = float(precio_raw)
+        except ValueError:
+            flash("❌ Cantidad debe ser un entero y precio un número válido", "danger")
             return redirect(url_for("add_product"))
 
         nuevo = Producto(nombre=nombre, cantidad=cantidad, precio=precio)
@@ -180,7 +190,7 @@ def add_product():
         guardar_json()
         guardar_csv()
 
-        flash("✅ Producto agregado y guardado correctamente", "success")
+        flash("✅ Producto agregado correctamente", "success")
         return redirect(url_for("list_products"))
     return render_template("products_form.html")
 
