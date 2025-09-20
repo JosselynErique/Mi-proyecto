@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import json
 import csv
@@ -10,19 +12,26 @@ import csv
 app = Flask(__name__)
 app.secret_key = "supermercado2025"
 
-# ⚠️ Configuración de conexión MySQL
+# Configuración de conexión MySQL
 USER_DB = "root"
-PASS_DB = ""   # sin contraseña
+PASS_DB = ""  # sin contraseña
 HOST_DB = "localhost"
-NAME_DB = "supermercado"  # base que debes crear en phpMyAdmin
+NAME_DB = "supermercado"
 
-# Conexión MySQL (usando mysql-connector)
+# Conexión MySQL
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://{USER_DB}:{PASS_DB}@{HOST_DB}/{NAME_DB}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 # =============================
-# MODELO DE PRODUCTO
+# FLASK-LOGIN
+# =============================
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+# =============================
+# MODELOS
 # =============================
 class Producto(db.Model):
     __tablename__ = "productos"
@@ -31,17 +40,22 @@ class Producto(db.Model):
     cantidad = db.Column(db.Integer, nullable=False)
     precio = db.Column(db.Float, nullable=False)
 
-# =============================
-# MODELO DE USUARIO
-# =============================
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = "usuarios"
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    mail = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+    def get_id(self):
+        return str(self.id_usuario)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
 
 # =============================
-# FUNCIONES AUXILIARES PARA ARCHIVOS
+# FUNCIONES AUXILIARES ARCHIVOS
 # =============================
 def guardar_txt():
     file_path = os.path.join(os.path.dirname(__file__), "datos", "datos.txt")
@@ -71,6 +85,69 @@ def guardar_csv():
             writer.writerow({"id": i, "nombre": p.nombre, "cantidad": p.cantidad, "precio": p.precio})
 
 # =============================
+# RUTAS LOGIN / REGISTRO
+# =============================
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        nombre = request.form.get("nombre")
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        # Validación de campos vacíos
+        if not nombre or not email or not password:
+            flash("❌ Todos los campos son obligatorios", "danger")
+            return redirect(url_for("register"))
+
+        # Verificar si el usuario ya existe
+        if Usuario.query.filter_by(email=email).first():
+            flash("❌ El correo ya está registrado", "danger")
+            return redirect(url_for("register"))
+
+        # Encriptar contraseña
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+
+        nuevo = Usuario(nombre=nombre, email=email, password=hashed_password)
+        db.session.add(nuevo)
+        db.session.commit()
+
+        flash("✅ Usuario registrado correctamente", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        if not email or not password:
+            flash("❌ Todos los campos son obligatorios", "danger")
+            return redirect(url_for("login"))
+
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario and check_password_hash(usuario.password, password):
+            login_user(usuario)
+            flash("✅ Bienvenido, login exitoso", "success")
+            next_page = request.args.get("next")
+            return redirect(next_page or url_for("dashboard"))
+        else:
+            flash("❌ Usuario o contraseña incorrectos", "danger")
+    return render_template("login.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("👋 Sesión cerrada", "info")
+    return redirect(url_for("login"))
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html", usuario=current_user)
+
+# =============================
 # RUTAS PRODUCTOS
 # =============================
 @app.route("/")
@@ -78,18 +155,24 @@ def index():
     return render_template("index.html")
 
 @app.route("/products")
+@login_required
 def list_products():
     productos = Producto.query.all()
     return render_template("products_list.html", productos=productos)
 
 @app.route("/products/add", methods=["GET", "POST"])
+@login_required
 def add_product():
     if request.method == "POST":
         nombre = request.form.get("nombre")
         cantidad = request.form.get("cantidad", type=int)
         precio = request.form.get("precio", type=float)
-        nuevo = Producto(nombre=nombre, cantidad=cantidad, precio=precio)
 
+        if not nombre or cantidad is None or precio is None:
+            flash("❌ Todos los campos son obligatorios y deben ser válidos", "danger")
+            return redirect(url_for("add_product"))
+
+        nuevo = Producto(nombre=nombre, cantidad=cantidad, precio=precio)
         db.session.add(nuevo)
         db.session.commit()
 
@@ -102,6 +185,7 @@ def add_product():
     return render_template("products_form.html")
 
 @app.route("/products/delete/<int:id_producto>")
+@login_required
 def delete_product(id_producto):
     producto = Producto.query.get_or_404(id_producto)
     db.session.delete(producto)
@@ -118,30 +202,21 @@ def delete_product(id_producto):
 # RUTAS USUARIOS
 # =============================
 @app.route("/usuarios")
+@login_required
 def list_usuarios():
     usuarios = Usuario.query.all()
     return render_template("usuarios_list.html", usuarios=usuarios)
 
-@app.route("/usuarios/add", methods=["GET", "POST"])
-def add_usuario():
-    if request.method == "POST":
-        nombre = request.form.get("nombre")
-        mail = request.form.get("mail")
-        nuevo = Usuario(nombre=nombre, mail=mail)
-
-        db.session.add(nuevo)
-        db.session.commit()
-
-        flash("✅ Usuario agregado correctamente", "success")
-        return redirect(url_for("list_usuarios"))
-    return render_template("usuarios_form.html")
-
 @app.route("/usuarios/delete/<int:id_usuario>")
+@login_required
 def delete_usuario(id_usuario):
+    if current_user.id_usuario == id_usuario:
+        flash("❌ No puedes eliminar tu propio usuario", "danger")
+        return redirect(url_for("list_usuarios"))
+
     usuario = Usuario.query.get_or_404(id_usuario)
     db.session.delete(usuario)
     db.session.commit()
-
     flash("🗑 Usuario eliminado", "warning")
     return redirect(url_for("list_usuarios"))
 

@@ -10,3 +10,4 @@ Inventario Supermercado
 8. papas Ruffles - Cantidad: 25 - Precio: 0.5
 9. aceite - Cantidad: 10 - Precio: 3.0
 10. jugo  - Cantidad: 15 - Precio: 1.35
+11. Cola en lata  - Cantidad: 10 - Precio: 1.25

@@ -1,9 +1,27 @@
-<h2>Lista de Usuarios</h2>
-<a href="{{ url_for('add_usuario') }}">➕ Nuevo Usuario</a>
-<ul>
-  {% for u in usuarios %}
-    <li>{{ u.nombre }} - {{ u.mail }} 
-        <a href="{{ url_for('delete_usuario', id_usuario=u.id_usuario) }}">❌</a>
-    </li>
-  {% endfor %}
-</ul>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2><i class="fas fa-users" style="color: #5d3fd3;"></i> Lista de Usuarios</h2>
+    
+    <a href="{{ url_for('register') }}" style="text-decoration: none;">
+        <span style="color: #5d3fd3; font-weight: bold;">
+            <i class="fas fa-user-plus"></i> Nuevo Usuario
+        </span>
+    </a>
+
+    <ul style="list-style: none; padding: 0;">
+      {% for u in usuarios %}
+        <li style="background-color: #e6e6fa; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-circle" style="color: #5d3fd3; font-size: 1.2em;"></i> 
+                <span style="font-weight: bold;">{{ u.nombre }}</span> - {{ u.email }}
+            </div>
+            <a href="{{ url_for('delete_usuario', id_usuario=u.id_usuario) }}" style="color: #dc3545; text-decoration: none;">
+                <i class="fas fa-times-circle" style="font-size: 1.2em;"></i>
+            </a>
+        </li>
+      {% endfor %}
+    </ul>
+</div>
+{% endblock %}

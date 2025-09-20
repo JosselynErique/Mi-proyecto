@@ -49,6 +49,11 @@
             "nombre": "jugo ",
             "cantidad": 15,
             "precio": 1.35
+        },
+        {
+            "nombre": "Cola en lata ",
+            "cantidad": 10,
+            "precio": 1.25
         }
     ]
 }

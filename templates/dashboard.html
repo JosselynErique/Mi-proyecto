@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Bienvenido, {{ current_user.nombre }}</h2>
+    <p>Este es tu panel privado.</p>
+    <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+</div>
+{% endblock %}
