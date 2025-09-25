@@ -54,6 +54,11 @@
             "nombre": "Cola en lata ",
             "cantidad": 10,
             "precio": 1.25
+        },
+        {
+            "nombre": "tomate",
+            "cantidad": 10,
+            "precio": 0.25
         }
     ]
 }

@@ -11,3 +11,4 @@ Inventario Supermercado
 9. aceite - Cantidad: 10 - Precio: 3.0
 10. jugo  - Cantidad: 15 - Precio: 1.35
 11. Cola en lata  - Cantidad: 10 - Precio: 1.25
+12. tomate - Cantidad: 10 - Precio: 0.25

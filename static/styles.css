@@ -1,20 +1,17 @@
-/* General body styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8ff; /* Lavender Blush */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6f8;
     color: #333;
     margin: 0;
     padding: 0;
-    line-height: 1.6;
 }
 
-/* Header and navigation bar */
 header {
-    background-color: #5d3fd3; /* Purple heart */
-    color: white;
+    background: linear-gradient(90deg, #5d3fd3, #7f5af0);
+    color: #fff;
     padding: 1rem 0;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 header h1 {
@@ -25,7 +22,8 @@ header h1 {
 nav {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -33,108 +31,190 @@ nav a {
     color: white;
     text-decoration: none;
     font-weight: bold;
-    transition: color 0.3s ease;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
 }
 
 nav a:hover {
-    color: #b0c4de; /* LightSteelBlue */
+    background: rgba(255,255,255,0.2);
 }
 
-/* Main content container */
-.container {
-    max-width: 800px;
+main {
+    max-width: 900px;
     margin: 2rem auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
 }
 
-/* Headings */
+.container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
 h2 {
     color: #5d3fd3;
-    border-bottom: 2px solid #5d3fd3;
-    padding-bottom: 10px;
     margin-bottom: 20px;
-}
-
-/* Forms and buttons */
-form div {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="number"] {
+input[type="number"],
+select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    border-radius: 4px;
     box-sizing: border-box;
+    font-size: 1rem;
 }
 
-button {
-    background-color: #32cd32; /* Lime green for buttons */
+button, .btn {
+    background: #5d3fd3;
     color: white;
     padding: 12px 20px;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 8px;
     font-size: 1rem;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-button:hover {
-    background-color: #2e8b57; /* Sea green on hover */
+button:hover, .btn:hover {
+    background: #7f5af0;
 }
 
-/* Flash messages */
 .flash {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.flash.success { background: #135021; color: white; }
+.flash.danger { background: #91212c; color: white; }
+.flash.warning { background: #8b6f19; color: #333; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #5d3fd3;
+    color: white;
+    font-size: 1rem;
+}
+
+tr:hover {
+    background: #f1f1f1;
+}
+
+a.action-btn {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
     color: white;
     font-weight: bold;
 }
 
-.flash.success {
-    background-color: #28a745;
+a.edit { background: #22bf90; }
+a.delete { background: #9c22b5; }
+.button-group {
+    display: flex;        /* los pone en fila */
+    flex-wrap: wrap;      /* permite que se ajusten si la pantalla es pequeña */
+    gap: 10px;            /* espacio entre botones */
+    margin-top: 20px;
 }
 
-.flash.danger {
-    background-color: #dc3545;
-}
-
-.flash.warning {
-    background-color: #ffc107;
-    color: #333;
-}
-
-/* List styles */
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    background-color: #e6e6fa; /* Lavender */
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-li a {
-    color: #5d3fd3;
+.button-group button,
+.button-group a {
+    flex: 1;              /* opcional: que tomen mismo ancho */
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
     text-decoration: none;
     font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #6c63ff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #5750d4;
+}
+
+.btn-secondary {
+    background-color: #a0aec0;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #718096;
+}
+
+header h1 i {
+    font-size: 2.5rem; /* tamaño del ícono igual que el texto */
+    margin-right: 10px; /* espacio entre ícono y texto */
+    vertical-align: middle;
+    color: #ff6f61; /* color opcional, puedes elegir */
+}
+
+body {
+    background: #f8f9fa;
+}
+
+h2 {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 12px 25px;
+}
+/* 🔹 Fondo translúcido estilo glassmorphism */
+.transparent-box {
+    background: rgba(255, 255, 255, 0.6); /* blanco con transparencia */
+    backdrop-filter: blur(10px);          /* desenfoque del fondo */
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+/* 🔹 Botones juntos en fila */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;   /* espacio entre botones */
+    margin-top: 20px;
+}
+
+/* 🔹 Botones */
+.button-group .btn {
+    flex: none;             /* evita que se estiren de más */
+    min-width: 150px;       /* ancho mínimo para que se vean iguales */
 }
