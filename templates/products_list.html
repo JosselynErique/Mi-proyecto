@@ -1,34 +1,91 @@
 {% extends "base.html" %}
+{% block title %}Inventario{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2><i class="bi bi-cart-fill"></i> Lista de Productos</h2>
-    <a href="{{ url_for('add_product') }}" class="btn"><i class="bi bi-plus-circle-fill"></i> Agregar Producto</a>
+<div class="card shadow mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h2 class="h4 text-dark m-0"><i class="bi bi-boxes me-2"></i> Inventario de Productos</h2>
+        <div>
+            <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Agregar Producto
+            </a>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <form action="{{ url_for('list_products') }}" method="GET" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label">Buscar por Nombre, Categoría o Proveedor</label>
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Término de búsqueda..." value="{{ q or '' }}">
+                        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Mostrar Productos</label>
+                    <select name="mostrar" class="form-select">
+                        <option value="activos" {% if mostrar == 'activos' %}selected{% endif %}>Activos ({{ productos | selectattr('activo', 'equalto', True) | list | length }})</option>
+                        <option value="inactivos" {% if mostrar == 'inactivos' %}selected{% endif %}>Inactivos ({{ productos | selectattr('activo', 'equalto', False) | list | length }})</option>
+                        <option value="todos" {% if mostrar == 'todos' %}selected{% endif %}>Todos ({{ productos | length }})</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-secondary w-100" type="submit"><i class="bi bi-filter"></i> Aplicar Filtro</button>
+                </div>
+            </div>
+        </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in productos %}
-            <tr>
-                <td>{{ p.id_producto }}</td>
-                <td>{{ p.nombre }}</td>
-                <td>{{ p.cantidad }}</td>
-                <td>${{ "%.2f"|format(p.precio) }}</td>
-                <td>
-                    <a href="{{ url_for('edit_product', id_producto=p.id_producto) }}" class="action-btn edit"><i class="bi bi-pencil-fill"></i> Editar</a>
-                    <a href="{{ url_for('delete_product', id_producto=p.id_producto) }}" class="action-btn delete" onclick="return confirm('¿Seguro que deseas eliminar este producto?')"><i class="bi bi-trash-fill"></i> Eliminar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Proveedor</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-end">Precio (S/)</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in productos %}
+                    <tr class="{% if not p.activo %}table-warning text-muted{% endif %}">
+                        <td>{{ p.id }}</td>
+                        <td>{{ p.nombre }}</td>
+                        <td>{{ p.categoria.nombre if p.categoria else 'N/A' }}</td>
+                        <td>{{ p.proveedor.nombre if p.proveedor else 'N/A' }}</td>
+                        <td class="text-center">
+                            <span class="badge {% if p.cantidad > 10 %}bg-success{% elif p.cantidad > 0 %}bg-warning{% else %}bg-danger{% endif %}">{{ p.cantidad }}</span>
+                        </td>
+                        <td class="text-end">S/ {{ "%.2f"|format(p.precio) }}</td>
+                        <td class="text-center">
+                            <span class="badge bg-{{ 'success' if p.activo else 'danger' }}">{{ 'Activo' if p.activo else 'Inactivo' }}</span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('edit_product', id=p.id) }}" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                            
+                            {% if p.activo %}
+                                <form method="POST" action="{{ url_for('delete_product', id=p.id) }}" style="display:inline;" onsubmit="return confirm('¿Confirmas que deseas INACTIVAR «{{ p.nombre }}»? No se eliminará de la BD.')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Inactivar"><i class="bi bi-trash"></i></button>
+                                </form>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('restore_product', id=p.id) }}" style="display:inline;" onsubmit="return confirm('¿Confirmas que deseas RESTAURAR «{{ p.nombre }}»?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Restaurar"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No se encontraron productos con estos criterios.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

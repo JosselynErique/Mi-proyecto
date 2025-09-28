@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Editar Rol{% endblock %}
+
+{% block content %}
+<div class="container card p-4 shadow">
+  <h3><i class="bi bi-gear-fill me-2"></i> Editar Rol: {{ rol.nombre }}</h3>
+  <form method="POST">
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input name="nombre" class="form-control" value="{{ rol.nombre }}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Descripción</label>
+      <textarea name="descripcion" class="form-control" rows="3">{{ rol.descripcion }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select name="estado" class="form-select">
+            <option value="Activo" {% if rol.activo %}selected{% endif %}>Activo</option>
+            <option value="Inactivo" {% if not rol.activo %}selected{% endif %}>Inactivo</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
+    <a href="{{ url_for('list_roles') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

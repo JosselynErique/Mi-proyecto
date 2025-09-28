@@ -5,6 +5,8 @@
     <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
         <h2 class="text-center mb-4"><i class="bi bi-door-open-fill"></i> Iniciar Sesión</h2>
 
+        {# Muestra los mensajes flash heredados de base.html (ya incluidos) #}
+        {# Opcional: Si quieres forzar la visualización de mensajes flash solo en esta página, puedes poner este bloque aquí: #}
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="mb-3">

@@ -1,220 +1,110 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f4f6f8;
-    color: #333;
-    margin: 0;
+/*
+ * Archivo de estilos personalizado para Supermercado EL OASIS
+ *
+ * NOTA: La imagen de fondo del 'body' está en base.html
+*/
+
+/* ------------------------------------- */
+/* ESTRUCTURA Y LEGIBILIDAD */
+/* ------------------------------------- */
+
+/* Contenedor principal con fondo semitransparente BLANCO */
+main.container {
+    /* Fondo blanco semi-transparente para que el contenido sea legible */
+    background-color: rgba(255, 255, 255, 0.95); 
+    
+    border-radius: 15px;
+    padding: 30px;
+    flex: 1; /* Ocupa el espacio restante gracias al 'body' con Flexbox */
+    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); 
+    
+    /* El texto dentro de este contenedor debe ser oscuro */
+    color: #333; 
+}
+
+/* Footer con fondo semitransparente NEGRO */
+.footer {
+    background-color: rgba(0, 0, 0, 0.7); 
+    color: white;
+    padding: 1rem 0;
+    margin-top: auto; 
+    text-align: center;
+}
+
+/* Alertas */
+.alert {
+    z-index: 9999;
+}
+
+/* ------------------------------------- */
+/* COMPONENTES */
+/* ------------------------------------- */
+
+/* Buscador rápido (Fast Search) */
+#fast-search {
+    width: 300px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Resultados de la búsqueda */
+#search-results {
+    width: 300px;
+    margin: 10px auto 0 auto;
+    list-style: none;
     padding: 0;
 }
 
-header {
-    background: linear-gradient(90deg, #5d3fd3, #7f5af0);
-    color: #fff;
-    padding: 1rem 0;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-}
-
-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 10px;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 5px 12px;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    background: rgba(255,255,255,0.2);
-}
-
-main {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1rem;
-}
-
-.container {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-h2 {
-    color: #5d3fd3;
-    margin-bottom: 20px;
-    font-size: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-size: 1rem;
-}
-
-button, .btn {
-    background: #5d3fd3;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-button:hover, .btn:hover {
-    background: #7f5af0;
-}
-
-.flash {
-    padding: 12px 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-.flash.success { background: #135021; color: white; }
-.flash.danger { background: #91212c; color: white; }
-.flash.warning { background: #8b6f19; color: #333; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background: #5d3fd3;
-    color: white;
-    font-size: 1rem;
-}
-
-tr:hover {
-    background: #f1f1f1;
-}
-
-a.action-btn {
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: white;
-    font-weight: bold;
-}
-
-a.edit { background: #22bf90; }
-a.delete { background: #9c22b5; }
-.button-group {
-    display: flex;        /* los pone en fila */
-    flex-wrap: wrap;      /* permite que se ajusten si la pantalla es pequeña */
-    gap: 10px;            /* espacio entre botones */
-    margin-top: 20px;
-}
-
-.button-group button,
-.button-group a {
-    flex: 1;              /* opcional: que tomen mismo ancho */
-    text-align: center;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.btn-primary {
-    background-color: #6c63ff;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #5750d4;
-}
-
-.btn-secondary {
-    background-color: #a0aec0;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #718096;
-}
-
-header h1 i {
-    font-size: 2.5rem; /* tamaño del ícono igual que el texto */
-    margin-right: 10px; /* espacio entre ícono y texto */
-    vertical-align: middle;
-    color: #ff6f61; /* color opcional, puedes elegir */
-}
-
-body {
+#search-results li {
     background: #f8f9fa;
+    color: #000;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
 }
 
-h2 {
-    color: #2c3e50;
+#search-results li:hover {
+    background-color: #e2e6ea;
+    cursor: pointer;
+}
+
+
+/* Estilo para las tablas de inventario */
+.table-inventory {
+    background-color: rgba(255, 255, 255, 0.98); 
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.table-inventory th {
+    background-color: #343a40; 
+    color: white;
     font-weight: bold;
 }
 
-.btn {
-    border-radius: 10px;
-    padding: 12px 25px;
-}
-/* 🔹 Fondo translúcido estilo glassmorphism */
-.transparent-box {
-    background: rgba(255, 255, 255, 0.6); /* blanco con transparencia */
-    backdrop-filter: blur(10px);          /* desenfoque del fondo */
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
+.table-inventory td {
+    color: #333;
+    vertical-align: middle;
 }
 
-/* 🔹 Botones juntos en fila */
-.button-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;   /* espacio entre botones */
-    margin-top: 20px;
+.table-inventory tbody tr:hover {
+    background-color: #e9ecef;
 }
 
-/* 🔹 Botones */
-.button-group .btn {
-    flex: none;             /* evita que se estiren de más */
-    min-width: 150px;       /* ancho mínimo para que se vean iguales */
+/* Estilo para la imagen de perfil (si se usa en la navbar) */
+.profile-img {
+    width: 30px !important; 
+    height: 30px !important; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 1px solid #ffffff;
 }

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Historial de Ventas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white py-3">
+            <h2 class="h4 m-0"><i class="bi bi-journal-text me-2"></i> Historial de Ventas Registradas</h2>
+        </div>
+        
+        <div class="card-body">
+            {% if ventas %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Venta</th>
+                            <th>Fecha</th>
+                            <th>Usuario (Vendedor)</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in ventas %}
+                        <tr>
+                            <td>#{{ v.id }}</td>
+                            {# 🚨 CORRECCIÓN: Usar v.fecha #}
+                            <td>{{ v.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>{{ v.usuario.nombre }}</td> 
+                            <td><span class="fw-bold text-success">S/ {{ v.total | round(2) }}</span></td>
+                            <td>
+                                <a href="{{ url_for('view_venta', id_venta=v.id) }}" class="btn btn-sm btn-info" title="Ver Detalle / Factura">
+                                    <i class="bi bi-eye"></i> Detalle
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-info-circle"></i> No se han registrado ventas aún.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

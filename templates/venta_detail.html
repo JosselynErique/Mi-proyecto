@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Factura #{{ venta.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h2 class="h4 text-dark m-0"><i class="bi bi-receipt me-2"></i> Factura / Recibo #{{ venta.id }}</h2>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-warning"><i class="bi bi-printer"></i> Imprimir</button>
+                <a href="{{ url_for('list_ventas') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            
+            <div class="p-3 mb-4 bg-light border rounded">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <p class="mb-1 text-muted">Venta registrada por:</p>
+                        <p class="fw-bold">{{ venta.usuario.nombre }}</p>
+                    </div>
+                    <div class="col-md-6 mb-2 text-md-end">
+                        <p class="mb-1 text-muted">Fecha y Hora de la Transacción:</p>
+                        {# 🚨 CORRECCIÓN: Usar venta.fecha #}
+                        <p class="fw-bold">{{ venta.fecha.strftime('%d/%m/%Y %H:%M:%S') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="h5 mb-3">Detalle de Productos</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-info">
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th class="text-end">Precio Unitario</th>
+                            <th class="text-end">Cantidad</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in venta.detalles %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>**{{ detalle.producto.nombre }}**</td>
+                            <td class="text-end">S/ {{ detalle.precio_unitario | round(2) }}</td>
+                            <td class="text-end">{{ detalle.cantidad }}</td>
+                            <td class="text-end">S/ {{ detalle.subtotal | round(2) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end fw-bold h5">TOTAL FACTURA:</td>
+                            <td class="text-end fw-bolder h4 text-success">S/ {{ venta.total | round(2) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
