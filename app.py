@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, urllib.parse
-from models import db, Usuario, Producto, Categoria, Proveedor, Venta, DetalleVenta 
+from models import db, Usuario, Producto, Categoria, Proveedor, Venta, DetalleVenta
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "supermercado2025_CLAVE_SECRETA_POR_DEFECTO")
@@ -37,7 +37,6 @@ with app.app_context():
 # ------------------------
 # RUTAS PRINCIPALES
 # ------------------------
-
 @app.route("/")
 def index():
     return redirect(url_for("dashboard")) if current_user.is_authenticated else redirect(url_for("login"))
@@ -50,7 +49,6 @@ def dashboard():
 # ------------------------
 # LOGIN / REGISTER / LOGOUT
 # ------------------------
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -61,7 +59,6 @@ def login():
         usuario = Usuario.query.filter_by(email=email, activo=True).first()
         
         if usuario and check_password_hash(usuario.password, password):
-            # 🚨 CORRECCIÓN 2/3: Usamos remember=False para que la sesión no persista al reiniciar.
             login_user(usuario, remember=False) 
             flash("✅ ¡Bienvenido/a! Sesión iniciada.", "success")
             return redirect(request.args.get("next") or url_for("dashboard"))
@@ -189,30 +186,40 @@ def delete_usuario(id_usuario):
     return redirect(url_for("list_usuarios"))
 
 # ------------------------
-# CRUD PRODUCTOS
+# CRUD PRODUCTOS (con paginación)
 # ------------------------
-
 @app.route("/productos")
 @login_required
 def list_products():
-    q = request.args.get("q","").strip()
-    mostrar = request.args.get("mostrar","activos")
+    q = request.args.get("q", "").strip()
+    mostrar = request.args.get("mostrar", "activos")
+    page = request.args.get("page", 1, type=int)  # Página actual
+    per_page = 10  # Productos por página
+
     query = Producto.query
-    if mostrar=="activos":
+
+    if mostrar == "activos":
         query = query.filter_by(activo=True)
-    elif mostrar=="inactivos":
+    elif mostrar == "inactivos":
         query = query.filter_by(activo=False)
+
     if q:
         like = f"%{q}%"
         query = query.join(Categoria, isouter=True).join(Proveedor, isouter=True).filter(
-            db.or_(Producto.nombre.ilike(like), Categoria.nombre.ilike(like), Proveedor.nombre.ilike(like))
+            db.or_(
+                Producto.nombre.ilike(like),
+                Categoria.nombre.ilike(like),
+                Proveedor.nombre.ilike(like)
+            )
         )
-    productos = query.order_by(Producto.id.desc()).all()
+
+    productos = query.order_by(Producto.id.desc()).paginate(page=page, per_page=per_page)
+
     return render_template("products_list.html", productos=productos, q=q, mostrar=mostrar)
 
 @app.route("/productos/nuevo", methods=["GET","POST"])
 @login_required
-def add_product(): # <--- ¡IMPORTANTE! El nombre de la función debe ser 'add_product'
+def add_product():
     if request.method=="POST":
         nuevo = Producto(
             nombre=request.form.get("nombre").strip(),
@@ -273,7 +280,6 @@ def restore_product(id):
 # ------------------------
 # VENTAS Y HISTORIAL
 # ------------------------
-
 @app.route("/ventas/nueva", methods=["GET","POST"])
 @login_required
 def nueva_venta():
@@ -329,26 +335,21 @@ def nueva_venta():
     productos = Producto.query.filter_by(activo=True).all()
     return render_template("venta_form.html", productos=productos)
 
-# Ruta para ver el historial de ventas
 @app.route("/ventas")
 @login_required
 def list_ventas():
-    # 🚨 CORRECCIÓN 3/3: Ordenar por Venta.fecha para coincidir con el modelo.
     ventas = Venta.query.order_by(Venta.fecha.desc()).all()
     return render_template("ventas_list.html", ventas=ventas)
 
-# Ruta para ver el detalle de una venta específica
 @app.route("/ventas/<int:id_venta>")
 @login_required
 def view_venta(id_venta):
     venta = Venta.query.get_or_404(id_venta)
     return render_template("venta_detail.html", venta=venta)
 
-
 # ------------------------
 # API BUSQUEDA RÁPIDA
 # ------------------------
-
 @app.route("/api/productos/search")
 @login_required
 def api_search_products():
